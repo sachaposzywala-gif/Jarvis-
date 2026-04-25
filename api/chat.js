@@ -14,7 +14,8 @@ const { system, messages } = body;
         'Authorization': 'Bearer ' + process.env.OPENROUTER_API_KEY
       },
       body: JSON.stringify({
-        model: 'meta-llama/llama-3.3-70b-instruct:free',
+        model: 'qwen/qwen-2.5-7b-instruct:free
+',
         messages: all,
         max_tokens: 300
       })
