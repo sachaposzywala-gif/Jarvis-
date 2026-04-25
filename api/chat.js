@@ -13,13 +13,13 @@ export default async function handler(req, res) {
         'X-Title': 'JARVIS'
       },
       body: JSON.stringify({
-        model: 'meta-llama/llama-3.3-70b-instruct:free',
+        model: 'google/gemini-2.0-flash-exp:free',
         messages: req.body.messages,
         max_tokens: 500
       }),
     });
     const data = await response.json();
-    const text = data.choices?.[0]?.message?.content || "Erreur.";
+    const text = data.choices?.[0]?.message?.content || "Erreur IA.";
     res.status(200).json({ content: [{ type: 'text', text }] });
   } catch (e) {
     res.status(500).json({ error: e.message });
