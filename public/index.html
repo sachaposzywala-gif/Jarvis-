@@ -1,4 +1,90 @@
-TEST
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>JARVIS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#000a14;color:#00d4ff;font-family:system-ui,sans-serif;overflow:hidden;display:flex;flex-direction:column}
+.hdr{padding:12px 16px;background:rgba(0,8,20,0.98);border-bottom:1px solid rgba(0,212,255,0.2);display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:20px;font-weight:900;letter-spacing:4px;color:#00ffff}
+#clk{font-size:16px;font-weight:700;color:#00ffff;text-align:right}
+#dt{font-size:9px;color:#2a6080;text-align:right}
+.wbar{padding:10px 16px;background:rgba(0,50,100,0.15);border-bottom:1px solid rgba(0,212,255,0.15);display:flex;justify-content:space-between;align-items:center}
+.wl{display:flex;align-items:center;gap:8px}
+#wico{font-size:24px}
+#wtemp{font-size:24px;font-weight:900;color:#00ffff}
+#wcity{font-size:10px;font-weight:700;color:#6ecff0}
+#wdesc{font-size:9px;color:#2a6080}
+.wstats{display:flex;gap:10px}
+.ws{text-align:center}
+.wsv{font-size:11px;font-weight:700;color:#00d4ff}
+.wsl{font-size:8px;color:#2a6080}
+.msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:8px}
+.msg.u{flex-direction:row-reverse}
+.av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;border:1px solid rgba(0,212,255,0.3)}
+.msg.j .av{background:rgba(0,212,255,0.1);border-color:#00d4ff}
+.bb{max-width:82%;padding:9px 12px;font-size:13px;line-height:1.6}
+.msg.j .bb{background:rgba(0,80,170,0.1);border:1px solid rgba(0,212,255,0.2);border-left:3px solid #00d4ff;color:#8adaf5}
+.msg.u .bb{background:rgba(0,50,120,0.15);border-right:3px solid #0077bb;color:#6ab8d4;text-align:right}
+.dots{display:flex;gap:4px;align-items:center}
+.dots span{width:5px;height:5px;border-radius:50%;background:#00d4ff;animation:td 1.2s ease-in-out infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,80%,100%{transform:scale(.5);opacity:.3}40%{transform:scale(1);opacity:1}}
+.ibar{padding:10px 12px;background:rgba(0,6,14,0.98);border-top:1px solid rgba(0,212,255,0.2);display:flex;gap:8px;align-items:center}
+#inp{flex:1;background:rgba(0,80,160,0.1);border:1px solid rgba(0,212,255,0.2);color:#00d4ff;font-size:14px;padding:9px 12px;outline:none;border-radius:4px}
+#inp::placeholder{color:#2a6080;opacity:.7}
+.mbtn{width:40px;height:40px;border-radius:50%;border:1px solid rgba(0,212,255,0.4);background:rgba(0,212,255,0.08);color:#00d4ff;font-size:16px;cursor:pointer;flex-shrink:0}
+.mbtn.on{border-color:#e74c3c;color:#e74c3c}
+.sbtn{padding:0 14px;height:40px;background:linear-gradient(135deg,#0066aa,#00d4ff);border:none;color:#000;font-size:12px;font-weight:700;cursor:pointer;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="hdr">
+<div><div class="logo">J.A.R.V.I.S.</div><div style="font-size:9px;color:#2a6080">STARK INDUSTRIES</div></div>
+<div><div id="clk">--:--</div><div id="dt">...</div></div>
+</div>
+<div class="wbar">
+<div class="wl"><div id="wico">🌡️</div><div id="wtemp">--°</div><div><div id="wcity">GPS...</div><div id="wdesc">Chargement...</div></div></div>
+<div class="wstats">
+<div class="ws"><div class="wsv" id="whum">--%</div><div class="wsl">HUMID</div></div>
+<div class="ws"><div class="wsv" id="wwind">--</div><div class="wsl">VENT</div></div>
+<div class="ws"><div class="wsv" id="wfeel">--°</div><div class="wsl">RESSENTI</div></div>
+</div>
+</div>
+<div class="msgs" id="msgs">
+<div class="msg j"><div class="av">⚙️</div><div class="bb">Bonsoir Chef. J.A.R.V.I.S. est en ligne. GPS et météo en cours d'acquisition.</div></div>
+</div>
+<div class="ibar">
+<button class="mbtn" id="micBtn" onclick="toggleMic()">🎤</button>
+<input type="text" id="inp" placeholder="Parlez à JARVIS, Chef..." onkeydown="if(event.key==='Enter')send()"/>
+<button class="sbtn" onclick="send()">ENVOYER</button>
+</div>
+<script>
+function clock(){const n=new Date();document.getElementById('clk').textContent=[n.getHours(),n.getMinutes()].map(v=>String(v).padStart(2,'0')).join(':');const D=['DIM','LUN','MAR','MER','JEU','VEN','SAM'],M=['JAN','FEV','MAR','AVR','MAI','JUN','JUL','AOU','SEP','OCT','NOV','DEC'];document.getElementById('dt').textContent=D[n.getDay()]+' '+n.getDate()+' '+M[n.getMonth()];}
+clock();setInterval(clock,1000);
+navigator.geolocation?.watchPosition(p=>{getCity(p.coords.latitude,p.coords.longitude);getWeather(p.coords.latitude,p.coords.longitude);},()=>getWeather(50.63,3.06),{enableHighAccuracy:true});
+async function getCity(la,lo){try{const r=await fetch('https://nominatim.openstreetmap.org/reverse?lat='+la+'&lon='+lo+'&format=json&accept-language=fr');const d=await r.json();document.getElementById('wcity').textContent=(d.address?.city||d.address?.town||d.address?.village||'Position').toUpperCase();}catch{}}
+async function getWeather(la,lo){try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+la+'&longitude='+lo+'&current=temperature_2m,relative_humidity_2m,wind_speed_10m,apparent_temperature,weather_code&wind_speed_unit=kmh&timezone=auto');const d=await r.json();const c=d.current;const w=c.weather_code;document.getElementById('wico').textContent=w===0?'☀️':w<=3?'⛅':w<=48?'🌫️':w<=67?'🌧️':w<=77?'❄️':'⛈️';document.getElementById('wtemp').textContent=Math.round(c.temperature_2m)+'°';document.getElementById('wdesc').textContent=w===0?'Dégagé':w<=3?'Nuageux':w<=48?'Brumeux':w<=67?'Pluvieux':w<=77?'Neigeux':'Orageux';document.getElementById('whum').textContent=c.relative_humidity_2m+'%';document.getElementById('wwind').textContent=Math.round(c.wind_speed_10m);document.getElementById('wfeel').textContent=Math.round(c.apparent_temperature)+'°';}catch{}}
+function addMsg(r,t){const c=document.getElementById('msgs');const d=document.createElement('div');d.className='msg '+r;d.innerHTML='<div class="av">'+(r==='j'?'⚙️':'👤')+'</div><div class="bb">'+t+'</div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function showTyp(){const c=document.getElementById('msgs');const d=document.createElement('div');d.className='msg j';d.id='typ';d.innerHTML='<div class="av">⚙️</div><div class="bb"><div class="dots"><span></span><span></span><span></span></div></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function rmTyp(){document.getElementById('typ')?.remove();}
+const hist=[];
+async function askJarvis(txt){addMsg('u',txt);showTyp();hist.push({role:'user',content:txt});if(hist.length>16)hist.splice(0,2);try{const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:"Tu es J.A.R.V.I.S., IA de Stark Industries. Tu parles en français et tu appelles l'utilisateur Chef. Sois précis et direct.",messages:hist})});const data=await res.json();const reply=data.content?.[0]?.text||'Erreur.';hist.push({role:'assistant',content:reply});rmTyp();addMsg('j',reply);speak(reply);}catch{rmTyp();addMsg('j','Connexion impossible Chef.');}}
+function send(){const i=document.getElementById('inp');const t=i.value.trim();if(!t)return;i.value='';askJarvis(t);}
+let vs=[];window.speechSynthesis&&(speechSynthesis.onvoiceschanged=()=>{vs=speechSynthesis.getVoices();});
+function speak(t){if(!speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=.9;u.pitch=.8;const v=vs.find(v=>v.lang==='fr-FR');if(v)u.voice=v;speechSynthesis.speak(u);}
+let reco=null,listening=false;
+function toggleMic(){if(listening){stopL();return;}const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Utilisez Safari.');return;}reco=new SR();reco.lang='fr-FR';reco.continuous=false;reco.interimResults=false;reco.onresult=e=>{const t=e.results[0][0].transcript;stopL();askJarvis(t);};reco.onerror=()=>stopL();reco.onend=()=>stopL();listening=true;reco.start();document.getElementById('micBtn').className='mbtn on';document.getElementById('micBtn').textContent='🔴';}
+function stopL(){listening=false;try{reco?.stop();}catch{}document.getElementById('micBtn').className='mbtn';document.getElementById('micBtn').textContent='🎤';}
+</script>
+</body>
+</html>
+
 
 
 
