@@ -24,7 +24,8 @@ export default async function handler(req, res) {
         'X-Title': 'JARVIS'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-chat:free',
+        model: 'nvidia/llama-3.1-nemotron-70b-instruct:free
+',
         messages: allMessages,
         max_tokens: 500
       })
