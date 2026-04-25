@@ -15,7 +15,8 @@ export default async function handler(req, res) {
       'HTTP-Referer': 'https://jarvis-puce-xi.vercel.app',
       'X-Title': 'JARVIS'
     },
-    body: JSON.stringify({ model: 'mistralai/mistral-7b-instruct:free', messages: allMessages, max_tokens: 500 }),
+    body: JSON.stringify({ model: 'deepseek/deepseek-chat:free
+', messages: allMessages, max_tokens: 500 }),
   });
   const data = await response.json();
   const text = data.choices?.[0]?.message?.content || JSON.stringify(data.error || 'Vide');
