@@ -23,10 +23,13 @@ export default async function handler(req, res) {
       }),
     });
     const data = await response.json();
-    const text = data.choices?.[0]?.message?.content || "Je n'ai pas pu répondre.";
+    if (data.error) {
+      res.status(200).json({ content: [{ type: 'text', text: 'Erreur API: ' + data.error.message }] });
+      return;
+    }
+    const text = data.choices?.[0]?.message?.content || "Vide.";
     res.status(200).json({ content: [{ type: 'text', text }] });
   } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-}
+    res.status(200).json({ content: [{ type: 'text', text: 'Exception: ' + e.message }] });
+  
 
