@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         'X-Title': 'JARVIS'
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-exp:free',
+        model: 'mistralai/mistral-7b-instruct:free',
         messages: allMessages,
         max_tokens: 500
       }),
@@ -29,3 +29,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error: e.message });
   }
 }
+
